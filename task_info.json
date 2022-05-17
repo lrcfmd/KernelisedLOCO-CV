@@ -1,0 +1,57 @@
+{
+    "T_c":{
+        "type":"regression",
+        "study_folder":"Machine learning modeling of suerconducting critical temperature",
+        "task_folder":"Tc"
+    },
+    "T_c|(T_c>10K)":{
+        "type":"regression",
+        "study_folder":"Machine learning modeling of suerconducting critical temperature",
+        "task_folder":"TcGivenTcHigh"
+    },
+    "T_c>10K":{
+        "type":"classification",
+        "study_folder":"Machine learning modeling of suerconducting critical temperature",
+        "task_folder":"TcHigh"
+    },
+    "HH stability":{
+        "type":"classification",
+        "study_folder":"Materials Screening for the Discovery of New Half-Heuslers: Machine Learning versus ab Initio Methods",
+        "task_folder":"hhStability"
+    },
+    "E_{gap}(oxides)":{
+        "type":"regression",
+        "study_folder":"Data-driven discovery of photoactive quaternery oxides using first-principles machine learning",
+        "task_folder":"bandGap"
+    },
+    "GFA":{
+        "type":"classification",
+        "study_folder":"A Machine Learning Approach for Engineering Bulk Metallic Glass Alloys",
+        "task_folder":"gfa"
+    },
+    "D_{max}":{
+        "type":"regression",
+        "study_folder":"A Machine Learning Approach for Engineering Bulk Metallic Glass Alloys",
+        "task_folder":"Dmax"
+    },
+    "\\Delta T_x":{
+        "type":"regression",
+        "study_folder":"A Machine Learning Approach for Engineering Bulk Metallic Glass Alloys",
+        "task_folder":"dTx"
+    },
+    "E_{gap}(DFT)":{
+        "type":"regression",
+        "study_folder":"Extracting Knowledge from DFT: Experimental Band Gap Predictions Through Ensemble Learning",
+        "task_folder":"DFT"
+    },
+    "E_{gap}(exptl)":{
+        "type":"regression",
+        "study_folder":"Extracting Knowledge from DFT: Experimental Band Gap Predictions Through Ensemble Learning",
+        "task_folder":"Experimental"
+    },
+    "E_{gap}(exptl) \\cup E_{gap}(DFT)":{
+        "type":"regression",
+        "study_folder":"Extracting Knowledge from DFT: Experimental Band Gap Predictions Through Ensemble Learning",
+        "task_folder":"Mixed"
+    }
+}
