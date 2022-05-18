@@ -1,7 +1,9 @@
 domain_knowledge/
-data/
 *.ipynb_checkpoints
 example_clustering.json
 example_kernelised_clustering.json
 __pycache__
-
+compress_data.ipynb
+*CBFV.csv
+data/case_studies/**/*projection.csv
+data/linear_seperability/**/*projection.csv

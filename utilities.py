@@ -87,8 +87,62 @@ def do_loco_cv(clusters, data, model, metric, return_score_breakdown=False):
 
 
 
+def apply_random_projections(projection_matrix, df, out_file=None):
+    """Given a projection matrix and a compvec representation, applies the random
+    projection and either returns the result (aligned with targets and formulae)
+    or outputs result to file
+    Parameters:
+    projection_matrix (numpy array): matrix to project with
+    df (pandas DataFrame): compvec representation of data set to project
+    out_file (None or string): optional place to save the result
+    Returns:
+    pandas DataFrame or None: resulting projection
 
-def featurise_data(formulae, style='jarvis', target=None):
+   """
+    
+    representation = df.drop('formula',axis=1)
+    if 'target' in representation.columns:
+        representation = df.drop('target',axis=1)
+    projection = representation.to_numpy() @ projection_matrix
+    projection = pd.DataFrame(projection.T, columns=range(projection.shape[0]))
+    projection['formula'] = df['formula']
+    if 'target' in df.columns:
+        projection['target'] = df['target']
+    
+    if out_file is None:
+        return projection
+    
+    projection.to_csv(out_file,index=False)
+
+    
+def mp_random_projections_helper(args):
+    """A helper function for multiprocessing random projection
+    Parameters:
+    args (tupple in for (args, kwargs)): args and kwargs 
+    for apply_random_projections function
+    Returns:
+    pandas DataFrame or None: resulting projection
+
+   """
+    return apply_random_projections(*args[0], **args[1])
+    
+
+    
+    
+def mp_featurisation_helper(args):
+    """A helper function for multiprocessing featurisation
+    Parameters:
+    args (tupple in for (args, kwargs)): args and kwargs 
+    for featurise_data function
+    Returns:
+    pandas DataFrame or None: resulting featurisation
+
+   """
+    return featurise_data(*args[0], **args[1])
+    
+    
+
+def featurise_data(formulae, style='jarvis', target=None, out_file=None):
     """Featurises data, with optional target to align data to
 
     Parameters:
@@ -97,12 +151,18 @@ def featurise_data(formulae, style='jarvis', target=None):
          the featurisation method to use
     target (pandas Series): target values to be assigned into a column
          (called target) in the featurised data
+    out_file (str or None): if string is passed this function will
+        save DataFrame to file at this path rather than returning it
     Returns:
     pandas DataFrame of featurised data
 
    """
     if style.lower() == 'compvec':
-        return generate_features_compVec(formulae, target=target)
+        df = generate_features_compVec(formulae, target=target)
+        if out_file is None:
+            return df
+        df.to_csv(out_file, index=False)
+        return
 
     if not isinstance(formulae, pd.DataFrame):
         df = pd.DataFrame(data=formulae, columns=['formula'])
@@ -118,7 +178,10 @@ def featurise_data(formulae, style='jarvis', target=None):
     if target is not None:
         X['target'] = target
     X['formula'] = formulae
-    return X
+    if out_file is None:
+            return X
+    X.to_csv(out_file, index=False)
+
 
 #This function is pretty basic but also runs pretty fast because regex is fast
 def generate_features_compVec(formulae, target = None):
