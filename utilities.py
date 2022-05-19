@@ -99,10 +99,11 @@ def apply_random_projections(projection_matrix, df, out_file=None):
     pandas DataFrame or None: resulting projection
 
    """
-    
+    if out_file is not None:
+        print("creating file", out_file)
     representation = df.drop('formula',axis=1)
     if 'target' in representation.columns:
-        representation = df.drop('target',axis=1)
+        representation = representation.drop('target',axis=1)
     projection = representation.to_numpy() @ projection_matrix
     projection = pd.DataFrame(projection.T, columns=range(projection.shape[0]))
     projection['formula'] = df['formula']
@@ -157,6 +158,8 @@ def featurise_data(formulae, style='jarvis', target=None, out_file=None):
     pandas DataFrame of featurised data
 
    """
+    if out_file is not None:
+        print('creating',out_file)
     if style.lower() == 'compvec':
         df = generate_features_compVec(formulae, target=target)
         if out_file is None:
