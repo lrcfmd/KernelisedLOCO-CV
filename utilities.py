@@ -105,7 +105,7 @@ def apply_random_projections(projection_matrix, df, out_file=None):
     if 'target' in representation.columns:
         representation = representation.drop('target',axis=1)
     projection = representation.to_numpy() @ projection_matrix
-    projection = pd.DataFrame(projection.T, columns=range(projection.shape[0]))
+    projection = pd.DataFrame(projection, columns=range(projection.shape[1]))
     projection['formula'] = df['formula']
     if 'target' in df.columns:
         projection['target'] = df['target']

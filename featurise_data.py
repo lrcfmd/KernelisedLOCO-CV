@@ -105,7 +105,7 @@ def featurise_folder(folder_name, force_refresh=False):
             async_tasks += featurise_CBFV_file(folder_name, file, force_refresh=force_refresh)
     return async_tasks
             
-async_tasks = featurise_folder('data
+async_tasks = featurise_folder('data')
 while (True):
     all_finished = True
     for task in async_tasks:
