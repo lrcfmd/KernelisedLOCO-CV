@@ -14,16 +14,21 @@ except Exception as e:
     raise Exception('domain_knowledge library not found. Please read and follow the instructions in the README.md to download it') from e
 with open('periodictable.csv') as f:
     periodic_table = [x.rstrip() for x in f.readlines()]
+"""list: List of elemental symbols used for consistent ordering.
+"""
 element_regex = re.compile(r'(([A-Z][a-z]?)\s?([0-9]*(\.[0-9]*)?)?\s?)')
-def find_clusterings(data, formulae):
-    """clusters data using kmeans clustering for values of k between 2 and 10
+"""re.Pattern: simple regex pattern for decomposing compositions to elemental symbols and quantities (does not check elemental symbols are valid symbols).
+"""
 
-    Parameters:
-    data (pandas Dataframe or np.ndarray): data to cluster
-    formulae (pandas Series or list of strings): formulae associated with each row of data
+def find_clusterings(data, formulae):
+    """Clusters data using kmeans clustering for values of k between 2 and 10.
+
+    Args:
+        data (pandas.Dataframe or numpy.ndarray): data to cluster.
+        formulae (pandas.Series or list of str): formulae associated with each row of data.
     Returns:
-    list: clusters in the form [{'k':2, 'formulae':['H2O','NaCl'....],
-          'clusters':[0,1...]},{'k':2...]
+        list: clusters in the form [{'k':2, 'formulae':['H2O','NaCl'....],
+            'clusters':[0,1...]},{'k':2...]
 
    """
     clusters = []
@@ -38,19 +43,19 @@ def find_clusterings(data, formulae):
     return clusters
 
 def do_loco_cv(clusters, data, model, metric, return_score_breakdown=False):
-    """Performs LOCO-CV given predefined clusters
+    """Performs LOCO-CV given predefined clusters.
 
-    Parameters:
-    clusters (python list): Clusters with which to apply LOCO-CV
-         in the form [{'k':2, 'formulae':['H2O','NaCl'....],'clusters':[0,1...]},{'k':2...]
-    data (pandas DataFrame): data to apply LOCO-CV to
-    model (any model that uses sklearn style .fit, .predict interface): the model to evaluate
-    metric (function that takes in true and predicted values): metric to evaluate model with
-    return_score_breakdown (bool): whether to return per cluster scores as well
-         as the overall mean score of the model
+    Args:
+        clusters (list): Clusters with which to apply LOCO-CV
+            in the form [{'k':2, 'formulae':['H2O','NaCl'....],'clusters':[0,1...]},{'k':2...]
+        data (pandas.DataFrame): data to apply LOCO-CV to.
+        model (any model that uses SKlearn style .fit, .predict interface): the model to evaluate.
+        metric (function that takes in true and predicted values): metric to evaluate model with.
+        return_score_breakdown (bool): whether to return per cluster scores as well
+         as the overall mean score of the model.
     Returns:
-    float or float, list if return_score_breakdown: the performance of the model
-           (and the associated per cluster scores if return_score_breakdown)
+       float or list if return_score_breakdown: the performance of the model
+           (and the associated per cluster scores if return_score_breakdown).
 
    """
     all_scores = []
@@ -90,13 +95,14 @@ def do_loco_cv(clusters, data, model, metric, return_score_breakdown=False):
 def apply_random_projections(projection_matrix, df, out_file=None):
     """Given a projection matrix and a compvec representation, applies the random
     projection and either returns the result (aligned with targets and formulae)
-    or outputs result to file
-    Parameters:
-    projection_matrix (numpy array): matrix to project with
-    df (pandas DataFrame): compvec representation of data set to project
-    out_file (None or string): optional place to save the result
+    or outputs result to file.
+    
+    Args:
+        projection_matrix (numpy.array): matrix to project with.
+        df (pandas.DataFrame): compvec representation of data set to project.
+        out_file (None or str): optional place to save the result.
     Returns:
-    pandas DataFrame or None: resulting projection
+        pandas.DataFrame or None: resulting projection.
 
    """
     if out_file is not None:
@@ -117,12 +123,13 @@ def apply_random_projections(projection_matrix, df, out_file=None):
 
     
 def mp_random_projections_helper(args):
-    """A helper function for multiprocessing random projection
-    Parameters:
-    args (tupple in for (args, kwargs)): args and kwargs 
-    for apply_random_projections function
+    """A helper function for multiprocessing random projection.
+    
+    Args:
+        args (tupple in for (args, kwargs)): args and kwargs 
+            for apply_random_projections function.
     Returns:
-    pandas DataFrame or None: resulting projection
+        pandas.DataFrame or None: resulting projection.
 
    """
     return apply_random_projections(*args[0], **args[1])
@@ -131,12 +138,13 @@ def mp_random_projections_helper(args):
     
     
 def mp_featurisation_helper(args):
-    """A helper function for multiprocessing featurisation
-    Parameters:
-    args (tupple in for (args, kwargs)): args and kwargs 
-    for featurise_data function
+    """A helper function for multiprocessing featurisation.
+    
+    Args:
+        args (tupple in for (args, kwargs)): args and kwargs 
+            for featurise_data function.
     Returns:
-    pandas DataFrame or None: resulting featurisation
+        pandas.DataFrame or None: resulting featurisation.
 
    """
     return featurise_data(*args[0], **args[1])
@@ -144,18 +152,18 @@ def mp_featurisation_helper(args):
     
 
 def featurise_data(formulae, style='jarvis', target=None, out_file=None):
-    """Featurises data, with optional target to align data to
+    """Featurises data, with optional target to align data to.
 
-    Parameters:
-    formulae (pandas DataFrame): the formulae to featurise
-    style ('jarvis', 'compVec','onehot','random_200','magpie', 'oliynyk'):
-         the featurisation method to use
-    target (pandas Series): target values to be assigned into a column
-         (called target) in the featurised data
-    out_file (str or None): if string is passed this function will
-        save DataFrame to file at this path rather than returning it
+    Args:
+        formulae (pandas.DataFrame): the formulae to featurise.
+        style ('jarvis', 'compVec','onehot','random_200','magpie', 'oliynyk'):
+            the featurisation method to use.
+        target (pandas.Series): target values to be assigned into a column
+            (called target) in the featurised data.
+        out_file (str or None): if string is passed this function will
+            save DataFrame to file at this path rather than returning it.
     Returns:
-    pandas DataFrame of featurised data
+        pandas.DataFrame: the featurised data.
 
    """
     if out_file is not None:
@@ -189,13 +197,13 @@ def featurise_data(formulae, style='jarvis', target=None, out_file=None):
 #This function is pretty basic but also runs pretty fast because regex is fast
 def generate_features_compVec(formulae, target = None):
     """Creates a fractional encoding of input formulae.
-    Note: this function does not support formulae containing brackets
+    Note: this function does not support formulae containing brackets.
 
-    Parameters:
-    formulae (pandas DataFrame): the formulae to featurise
-    target (pandas Series): target values to be assigned into a column (called target) in the featurised data
+    Args:
+        formulae (pandas.DataFrame): the formulae to featurise.
+        target (pandas.Series): target values to be assigned into a column (called target) in the featurised data.
     Returns:
-    pandas DataFrame of featurised data
+        pandas.DataFrame: the featurised data
 
    """
     out = []

@@ -5,23 +5,30 @@ import multiprocessing
 import numpy as np
 import time
 pool = multiprocessing.Pool(multiprocessing.cpu_count())
-
+"""multiprocessing.Pool: pool for multiprocessing.
+"""
 rp_locations = 'data/random_projections'
+"""str: file directory of the random projections.
+"""
 featurisation_styles = ['jarvis','compVec','onehot','magpie','oliynyk','random_200']
+"""list: available featurisation styles.
+"""
 
 #Random projections are small enough I'm happy to leave them in ram to save reading them in repeatedly
 random_projections = {style: np.genfromtxt(os.path.join(rp_locations,f'{style}_projection.csv'), delimiter=',') for style in featurisation_styles}
-
+"""dict: numpy random projection matricies in each available featurisation style.
+"""
 
 
 def featurise_random_projection_file(folder_name, file_name, force_refresh=False):
     """Given a folder and a file in that folder, featurises that 
-    file into every available size of random projection
-    Parameters:
-    folder_name (string): path to folder
-    file_name (string): name of file
-    returns:
-    list(MapResult) object of async tasks
+        file into every available size of random projection.
+        
+    Args:
+       folder_name (str): path to folder.
+       file_name (str): name of file.
+    Returns:
+       list(MapResult): the MapResults async tasks.
    """
     
     full_file_name = os.path.join(folder_name, file_name)
@@ -49,12 +56,13 @@ def featurise_random_projection_file(folder_name, file_name, force_refresh=False
 
 def featurise_CBFV_file(folder_name, file_name, force_refresh=False):
     """Given a folder and a file in that folder, featurises that 
-    file into every available CBFV style
-    Parameters:
-    folder_name (string): path to folder
-    file_name (string): name of file
-    returns:
-    list(MapResult) object of async tasks
+        file into every available CBFV style.
+        
+    Args:
+        folder_name (str): path to folder.
+        file_name (str): name of file.
+    Returns:
+       list(MapResult): the MapResults async tasks.
    """
     
     full_file_name = os.path.join(folder_name, file_name)
@@ -84,11 +92,12 @@ def featurise_CBFV_file(folder_name, file_name, force_refresh=False):
     
     
 def featurise_folder(folder_name, force_refresh=False):
-    """featurises data in this folder and all subfolders
-    Parameters:
-    folder_name (string): path to folder
-    returns:
-    pandas None
+    """featurises data in this folder and all subfolders.
+    
+    Args:
+        folder_name (str): path to folder.
+    Returns:
+        list(MapResult): the MapResults async tasks.
    """
     print('Featurising folder', folder_name)
     async_tasks = []
@@ -105,6 +114,8 @@ def featurise_folder(folder_name, force_refresh=False):
             async_tasks += featurise_CBFV_file(folder_name, file, force_refresh=force_refresh)
     return async_tasks
             
+    
+    
 async_tasks = featurise_folder('data')
 while (True):
     all_finished = True
